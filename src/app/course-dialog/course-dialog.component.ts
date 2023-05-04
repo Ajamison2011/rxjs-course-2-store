@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import {fromEvent} from 'rxjs';
 import {concatMap, distinctUntilChanged, exhaustMap, filter, mergeMap, tap} from 'rxjs/operators';
 import {fromPromise} from 'rxjs/internal-compatibility';
+import { Store } from '../common/store.service';
 
 @Component({
     selector: 'course-dialog',
@@ -25,6 +26,7 @@ export class CourseDialogComponent implements AfterViewInit {
     constructor(
         private fb: FormBuilder,
         private dialogRef: MatDialogRef<CourseDialogComponent>,
+        private store:Store,
         @Inject(MAT_DIALOG_DATA) course:Course ) {
 
         this.course = course;
@@ -44,7 +46,13 @@ export class CourseDialogComponent implements AfterViewInit {
 
     }
 
-
+    save() {
+        this.store.saveCourse(this.course.id,this.form.value)
+        .subscribe(
+            () => this.close(),
+            err => console.log('Error Saving Course', err)
+        );
+    }
 
     close() {
         this.dialogRef.close();
